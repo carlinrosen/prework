@@ -1,0 +1,151 @@
+import UIKit
+import MessageUI
+
+class ViewController: UIViewController, settingsDelegateProtocol {
+    
+    @IBOutlet weak var billAmountTextField: UITextField!
+    @IBOutlet weak var tipAmountLabel: UILabel!
+    @IBOutlet weak var totalLabel: UILabel!
+    @IBOutlet weak var tipPercentage: UITextField!
+    @IBOutlet weak var calculateBtn: UIButton!
+    @IBOutlet weak var partySizeTextField: UITextField!
+    @IBOutlet weak var amtPerPerson: UILabel!
+    //let billAmtString = String(billAmountTextField.text)
+    //let tipAmtString = String(tipAmountLabel)
+    let defaults = UserDefaults.standard
+    let themeKey = "themeKey"
+    let darkTheme = "darkTheme"
+    let lightTheme = "lightTheme"
+    let redTheme = "redTheme"
+    let greenTheme = "greenTheme"
+    
+    //let tfTheme = "tfTheme"
+    let tfDark = "tfDark"
+    let tfLight = "tfLight"
+    let tfRed = "tfRed"
+    let tfGreen = "tfGreen"
+    
+    let calcColor = "calcColor"
+    let blackCalc = "blackCalc"
+    let redCalc = "redCalc"
+    let greenCalc = "greenCalc"
+    let blueCalc = "blueCalc"
+    let yellowCalc = "yellowCalc"
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+        self.title = "Tip Calculator"
+        mainDefaults()
+    }
+    
+    func sendData(myData: UIColor){
+        view.backgroundColor = myData
+    }
+    
+    func sendCalcData(calcData: UIColor) {
+        calculateBtn.backgroundColor = calcData
+    }
+    
+    func sendBillTfData(billTfData: UIColor) {
+        billAmountTextField.backgroundColor = billTfData
+        tipPercentage.backgroundColor = billTfData
+        partySizeTextField.backgroundColor = billTfData
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToSettings"{
+            let settingsVC: SettingsViewController = segue.destination as! SettingsViewController
+            settingsVC.delegate = self
+        }
+    }
+    
+    func saveColors(){
+        let theme = defaults.string(forKey: themeKey)
+        let btnColor = defaults.string(forKey: calcColor)
+        if theme == lightTheme{
+            view.backgroundColor = UIColor.white
+            billAmountTextField.backgroundColor = UIColor.lightGray
+            tipPercentage.backgroundColor = UIColor.lightGray
+            partySizeTextField.backgroundColor = UIColor.lightGray
+        }
+        else if theme == darkTheme{
+            view.backgroundColor = UIColor.darkGray
+            billAmountTextField.backgroundColor = UIColor.systemGray
+            tipPercentage.backgroundColor = UIColor.lightGray
+            partySizeTextField.backgroundColor = UIColor.lightGray
+        }
+        else if theme == redTheme{
+            view.backgroundColor = UIColor.red
+            billAmountTextField.backgroundColor = UIColor.systemPink
+            tipPercentage.backgroundColor = UIColor.systemPink
+            partySizeTextField.backgroundColor = UIColor.systemPink
+        }
+        else if theme == greenTheme{
+            view.backgroundColor = UIColor.systemGreen
+            billAmountTextField.backgroundColor = UIColor.systemMint
+            tipPercentage.backgroundColor = UIColor.systemMint
+            partySizeTextField.backgroundColor = UIColor.systemMint
+        }
+        if btnColor == blueCalc{
+            calculateBtn.backgroundColor = UIColor.systemBlue
+        }
+        else if btnColor == greenCalc{
+            calculateBtn.backgroundColor = UIColor.systemGreen
+        }
+        else if btnColor == yellowCalc{
+            calculateBtn.backgroundColor = UIColor.yellow
+        }
+        else if btnColor == redCalc{
+            calculateBtn.backgroundColor = UIColor.red
+        }
+        else if btnColor == blackCalc{
+            calculateBtn.backgroundColor = UIColor.black
+        }
+    }
+    
+    func mainDefaults(){
+        if self.view.backgroundColor == UIColor.white{
+            defaults.set(lightTheme, forKey: themeKey)
+        }
+        else if self.view.backgroundColor == UIColor.darkGray{
+            defaults.set(darkTheme, forKey: themeKey)
+        }
+        else if self.view.backgroundColor == UIColor.red{
+            defaults.set(redTheme, forKey: themeKey)
+        }
+        else if self.view.backgroundColor == UIColor.systemGreen{
+            defaults.set(greenTheme, forKey: themeKey)
+        }
+        if calculateBtn.backgroundColor == UIColor.systemBlue{
+            defaults.set(blueCalc, forKey: calcColor)
+        }
+        else if calculateBtn.backgroundColor == UIColor.black{
+            defaults.set(blackCalc, forKey: calcColor)
+        }
+        else if calculateBtn.backgroundColor == UIColor.red{
+            defaults.set(redCalc, forKey: calcColor)
+        }
+        else if calculateBtn.backgroundColor == UIColor.systemGreen{
+            defaults.set(greenCalc, forKey: calcColor)
+        }
+        else if calculateBtn.backgroundColor == UIColor.yellow{
+            defaults.set(yellowCalc, forKey: calcColor)
+        }
+        saveColors()
+    }
+
+    @IBAction func calculateBtnAction(_ sender: Any) {
+        let partySize:Double = Double(partySizeTextField.text!)!
+        let tipAmount:Double = Double(tipPercentage.text!)!/100
+        let bill:Double = Double(billAmountTextField.text!)!
+        let tip = bill * tipAmount
+        let total = tip + bill
+        let amountPerPerson = total/partySize
+        
+        
+        tipAmountLabel.text = String(format: "$%.2f", tip)
+        totalLabel.text = String(format: "$%.2f", total)
+        amtPerPerson.text = String(format: "$%.2f", amountPerPerson)
+    }
+}
