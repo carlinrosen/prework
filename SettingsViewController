@@ -1,0 +1,141 @@
+import UIKit
+
+protocol settingsDelegateProtocol{
+    func sendData(myData: UIColor)
+    func sendCalcData(calcData: UIColor)
+    func sendBillTfData(billTfData: UIColor)
+}
+
+class SettingsViewController: UIViewController {
+    @IBOutlet weak var calcControlLabel: UILabel!
+    @IBOutlet weak var CalcBtnControl: UISegmentedControl!
+    @IBOutlet weak var themeSegment: UISegmentedControl!
+    @IBOutlet weak var billTfLabel: UILabel!
+    let userDefaults = UserDefaults.standard
+    let themeKey = "themeKey"
+    let darkTheme = "darkTheme"
+    let lightTheme = "lightTheme"
+    let redTheme = "redTheme"
+    let greenTheme = "greenTheme"
+    
+    let tfDark = "tfDark"
+    let tfLight = "tfLight"
+    let tfRed = "tfRed"
+    let tfGreen = "tfGreen"
+    
+    let calcColor = "calcColor"
+    let blackCalc = "blackCalc"
+    let redCalc = "redCalc"
+    let greenCalc = "greenCalc"
+    let blueCalc = "blueCalc"
+    let yellowCalc = "yellowCalc"
+    var delegate: settingsDelegateProtocol? = nil
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        updateTheme()
+        updateCalcBtn()
+        let dataToBeSent = self.view.backgroundColor!
+        self.delegate?.sendData(myData: dataToBeSent)
+        let calcDataToBeSent = calcControlLabel.textColor!
+        self.delegate?.sendCalcData(calcData: calcDataToBeSent)
+        let billAmtDataToBeSent = billTfLabel.textColor!
+        self.delegate?.sendBillTfData(billTfData: billAmtDataToBeSent)
+        // Do any additional setup after loading the view.
+        
+    }
+    
+    func updateTheme(){
+        let theme = userDefaults.string(forKey: themeKey)
+        if (theme == lightTheme){
+            themeSegment.selectedSegmentIndex = 0
+            view.backgroundColor = UIColor.white
+            billTfLabel.textColor = UIColor.lightGray
+        }
+        else if (theme == darkTheme){
+            themeSegment.selectedSegmentIndex = 1
+            view.backgroundColor = UIColor.darkGray
+            billTfLabel.textColor = UIColor.systemGray
+        }
+        else if (theme == redTheme){
+            themeSegment.selectedSegmentIndex = 2
+            view.backgroundColor = UIColor.red
+            billTfLabel.textColor = UIColor.systemPink
+        }
+        else if (theme == greenTheme){
+            themeSegment.selectedSegmentIndex = 3
+            view.backgroundColor = UIColor.systemGreen
+            billTfLabel.textColor = UIColor.systemMint
+        }
+        userDefaults.synchronize()
+    }
+
+    @IBAction func newTheme(_ sender: Any) {
+        switch themeSegment.selectedSegmentIndex
+        {
+                case 0:
+                    userDefaults.set(lightTheme, forKey: themeKey)
+                case 1:
+                    userDefaults.set(darkTheme, forKey: themeKey)
+                case 2:
+                    userDefaults.set(redTheme, forKey: themeKey)
+                case 3:
+                    userDefaults.set(greenTheme, forKey: themeKey)
+                default:
+                    userDefaults.set(lightTheme, forKey: themeKey)
+            userDefaults.synchronize()
+        }
+        updateTheme()
+        let dataToBeSent = self.view.backgroundColor!
+        let billAmtDataToBeSent = billTfLabel.textColor!
+        self.delegate?.sendData(myData: dataToBeSent)
+        self.delegate?.sendBillTfData(billTfData: billAmtDataToBeSent)
+        userDefaults.synchronize()
+    }
+        
+    func updateCalcBtn(){
+        let calcColor = userDefaults.string(forKey: calcColor)
+        if calcColor == yellowCalc{
+            CalcBtnControl.selectedSegmentIndex = 0
+            calcControlLabel.textColor = UIColor.yellow
+        }
+        else if calcColor == blackCalc{
+            CalcBtnControl.selectedSegmentIndex = 1
+            calcControlLabel.textColor = UIColor.black
+        }
+        else if calcColor == redCalc{
+            CalcBtnControl.selectedSegmentIndex = 2
+            calcControlLabel.textColor = UIColor.red
+        }
+        else if calcColor == greenCalc{
+            CalcBtnControl.selectedSegmentIndex = 3
+            calcControlLabel.textColor = UIColor.systemGreen
+        }
+        else if calcColor == blueCalc{
+            CalcBtnControl.selectedSegmentIndex = 4
+            calcControlLabel.textColor = UIColor.systemBlue
+        }
+    }
+    
+    @IBAction func calcBtnAction(_ sender: Any) {
+        switch CalcBtnControl.selectedSegmentIndex{
+            case 0:
+                userDefaults.set(yellowCalc, forKey: calcColor)
+            case 1:
+                userDefaults.set(blackCalc, forKey: calcColor)
+            case 2:
+                userDefaults.set(redCalc, forKey: calcColor)
+            case 3:
+                userDefaults.set(greenCalc, forKey: calcColor)
+            case 4:
+                userDefaults.set(blueCalc, forKey: calcColor)
+            default:
+                userDefaults.set(blueCalc, forKey: calcColor)
+        }
+        updateCalcBtn()
+        let calcDataToBeSent = calcControlLabel.textColor!
+        self.delegate?.sendCalcData(calcData: calcDataToBeSent)
+        userDefaults.synchronize()
+    }
+    
+}
